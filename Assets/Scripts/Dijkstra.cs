@@ -131,10 +131,10 @@ public class Dijkstra : MonoBehaviour
             int currX = (currNode - 1) % m_MapWidth;
             int currY = (currNode - 1) / m_MapWidth;
 
-            AddNode(currX, currY + 1, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
-            AddNode(currX, currY - 1, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
-            AddNode(currX - 1, currY, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
-            AddNode(currX + 1, currY, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
+            FindDestNode(currX, currY + 1, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
+            FindDestNode(currX, currY - 1, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
+            FindDestNode(currX - 1, currY, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
+            FindDestNode(currX + 1, currY, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
 
             int minDisNode = -1;
             int tempDis = int.MaxValue;
@@ -171,7 +171,7 @@ public class Dijkstra : MonoBehaviour
         }
     }
 
-    private void AddNode(int x, int y, bool[] visits, int currDis, int[] dis, Node currNode)
+    private void FindDestNode(int x, int y, bool[] visits, int currDis, int[] dis, Node currNode)
     {
         if (x >= 0 && x < m_MapWidth && y >= 0 && y < m_MapHeight)
         {

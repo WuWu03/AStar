@@ -200,4 +200,3 @@ public class Dijkstra : MonoBehaviour
     private Queue<int> m_QueuePoints = new Queue<int>();
     private int[] m_Map = null;
 }
-

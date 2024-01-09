@@ -6,7 +6,7 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Tiled:MonoBehaviour
 {
-    public string ShapeType
+    public ShapeType ShapeType
     {
         get
         {
@@ -70,7 +70,7 @@ public class Tiled:MonoBehaviour
         MapUtil.SetLayer(gameObject, LayerMask.NameToLayer("Map"), true);
     }
 
-    public void SetGrid(Vector2Int pos, float xOffset, float yOffset, string shapeType, int index)
+    public void SetGrid(Vector2Int pos, float xOffset, float yOffset, ShapeType shapeType, int index)
     {
         gameObject.name = "Grid_" + pos.x + "_" + pos.y;
         m_ShapeType = shapeType;
@@ -99,7 +99,7 @@ public class Tiled:MonoBehaviour
 
     private float m_XOffset = 0f;
     private float m_YOffset = 0f;
-    private string m_ShapeType = string.Empty;
+    private ShapeType m_ShapeType = ShapeType.None;
 
     private SpriteRenderer m_SpriteRenderer;
     private TextMesh m_TxtPos;

@@ -7,7 +7,7 @@ public class DFS : MonoBehaviour
 {
     private void Awake()
     {
-        TiledMapMgr.instance.GenerateMap(6, 6, 0.62f, 0.62f, "Square");
+        TiledMapMgr.instance.GenerateMap(6, 6, 0.62f, 0.62f, ShapeType.Square);
         StartDFS(0, 0);
     }
 

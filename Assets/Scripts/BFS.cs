@@ -8,7 +8,7 @@ public class BFS : MonoBehaviour
 {
     private void Awake()
     {
-        TiledMapMgr.instance.GenerateMap(7, 7, 0.62f, 0.62f, "Square");
+        TiledMapMgr.instance.GenerateMap(7, 7, 0.62f, 0.62f, ShapeType.Square);
         StartBFS(3, 3);
     }
 

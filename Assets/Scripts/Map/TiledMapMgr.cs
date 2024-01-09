@@ -1,6 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
+public enum ShapeType
+{
+    None = 0,
+    Square = 1,
+    Hexagon = 2,
+}
 public class TiledMapMgr : MonoBehaviour
 {
     public static TiledMapMgr instance
@@ -16,11 +23,19 @@ public class TiledMapMgr : MonoBehaviour
         }
     }
 
-    public Vector2Int mapSize
+    public int mapWidth
     {
         get 
         {
-            return m_MapSize;
+            return m_MapWidth;
+        }
+    }
+
+    public int mapHeight
+    {
+        get
+        {
+            return m_MapHeight;
         }
     }
 
@@ -35,11 +50,21 @@ public class TiledMapMgr : MonoBehaviour
         m_GridRoot.layer = LayerMask.NameToLayer("Map");
     }
 
-    public void GenerateMap(int width, int height, float xOffset, float yOffset, string shapeType)
+    public void GenerateMap(int width, int height, float xOffset, float yOffset, ShapeType shapeType)
     {
-        m_MapSize.x = width;
-        m_MapSize.y = height;
-        m_Grid = Resources.Load<GameObject>("grid" + shapeType);
+        m_MapWidth = width;
+        m_MapHeight = height;
+
+        if (shapeType == ShapeType.Hexagon)
+        {
+            m_Grid = Resources.Load<GameObject>("gridHexagon");
+        }
+        else if (shapeType == ShapeType.Square)
+        {
+            m_Grid = Resources.Load<GameObject>("gridSquare");
+        }
+
+        m_ShapeType = shapeType;
         m_Tileds = new Tiled[width][];
 
         for (int x = 0; x < width; x++)
@@ -48,38 +73,40 @@ public class TiledMapMgr : MonoBehaviour
 
             for (int y = 0; y < height; y++)
             {
-
-                if (shapeType == "Hexagon")
-                {
-                    Vector2Int pos = MapUtil.SquarePosToHexagonPosX(x, y);
-                    GenerateGrid(pos, xOffset, yOffset, shapeType);
-                }
-                else if (shapeType == "Square")
-                {
-                    Vector2Int pos = new Vector2Int(x, y);
-                    GenerateGrid(pos, xOffset, yOffset, shapeType);
-                }
+                GenerateGrid(x, y, xOffset, yOffset, shapeType);
             }
         }
 
         m_GridRoot.transform.position = new Vector3(-width * xOffset / 2f, -height * yOffset / 2f + yOffset / 2f, 0f);
     }
 
-    private void GenerateGrid(Vector2Int pos, float xOffset, float yOffset, string shapeType)
+    private void GenerateGrid(int x,int y, float xOffset, float yOffset, ShapeType shapeType)
     {
         Tiled tiled = GameObject.Instantiate(m_Grid).AddComponent<Tiled>();
-        tiled.SetGrid(pos, xOffset, yOffset, shapeType, pos.x + pos.y * m_MapSize.x + 1);
-        tiled.SetSprite(shapeType.ToLower() + "1");
+
+        if (shapeType == ShapeType.Hexagon)
+        {
+            Vector2Int pos = MapUtil.SquarePosToHexagonPosX(x, y);
+            tiled.SetGrid(pos, xOffset, yOffset, shapeType, x + y * m_MapWidth + 1);
+            tiled.SetSprite("hexagon1");
+        }
+        else if (shapeType == ShapeType.Square)
+        {
+            Vector2Int pos = new Vector2Int(x, y);
+            tiled.SetGrid(pos, xOffset, yOffset, shapeType, x + y * m_MapWidth + 1);
+            tiled.SetSprite("square1");
+        }
+      
         tiled.transform.SetParent(m_GridRoot.transform, false);
         tiled.txtLeftTop.text = string.Empty;
         tiled.txtLeftBottom.text = string.Empty;
         tiled.txtRightBottom.text = string.Empty;
-        m_Tileds[pos.x][pos.y] = tiled;
+        m_Tileds[x][y] = tiled;
     }
 
     public Tiled GetGridByPos(int x, int y)
     {
-        if (x < 0 || x > m_MapSize.x - 1 || y < 0 || y > m_MapSize.y - 1)
+        if (x < 0 || x > m_MapWidth - 1 || y < 0 || y > m_MapHeight - 1)
         {
             return null;
         }
@@ -89,15 +116,16 @@ public class TiledMapMgr : MonoBehaviour
 
     public Tiled GetGridByIndex(int index)
     {
-        if(index <0 || index > m_MapSize.x * m_MapSize.y)
+        if (index < 0 || index > m_MapWidth * m_MapHeight)
         {
             return null;
         }
 
-        int y = (index - 1) / m_MapSize.x;
-        int x = (index - 1) % m_MapSize.x;
+        int y = (index - 1) / m_MapWidth;
+        int x = (index - 1) % m_MapWidth;
+        int mapWidth = m_MapWidth;
 
-        if (x < 0 || x > m_MapSize.x - 1 || y < 0 || y > m_MapSize.y - 1)
+        if (x < 0 || x > mapWidth - 1 || y < 0 || y > m_MapHeight - 1)
         {
             return null;
         }
@@ -106,7 +134,9 @@ public class TiledMapMgr : MonoBehaviour
     }
 
     private Tiled[][] m_Tileds = null;
-    private Vector2Int m_MapSize = Vector2Int.zero;
+    private int m_MapWidth = 0;
+    private int m_MapHeight = 0;
+    private ShapeType m_ShapeType = ShapeType.None;
     private GameObject m_GridRoot = null;
     private GameObject m_Grid = null;
 

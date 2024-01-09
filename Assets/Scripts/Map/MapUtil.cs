@@ -18,6 +18,11 @@ public class MapUtil
         return new Vector3(logicPos.x * scaleX, logicPos.y * scaleY, 0);
     }
 
+    public static int SquarePosToIndex(int x,int y,int mapWidth)
+    {
+        return x + y * mapWidth + 1;
+    }
+
     /// <summary>
     /// 四边形坐标转六边形坐标X轴排列
     /// </summary>
@@ -33,6 +38,7 @@ public class MapUtil
     {
         return new Vector2Int((x - y % 2) / 2, y);
     }
+
 
  
     public static void SetTag(GameObject go,string tag,bool isSetChild = false)

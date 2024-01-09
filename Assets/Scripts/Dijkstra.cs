@@ -23,22 +23,22 @@ public class Dijkstra : MonoBehaviour
         }
     }
 
-    private int m_MapWidth = 13;
-    private int m_MapHeight = 13;
+    private int m_MapWidth = 3;
+    private int m_MapHeight = 3;
 
     private void Awake()
     {
         m_Map = new int[m_MapWidth * m_MapHeight];
         m_MapData = new int[m_MapWidth * m_MapHeight];
 
-        for (int i = 0; i < 12; i++)
-        {
-            m_MapData[153 - i * m_MapWidth] = -1;
-            m_MapData[2 + i * m_MapWidth] = -1;
-            m_MapData[163 - i * m_MapWidth] = -1;
-        }
+        //for (int i = 0; i < 12; i++)
+        //{
+        //    m_MapData[153 - i * m_MapWidth] = -1;
+        //    m_MapData[2 + i * m_MapWidth] = -1;
+        //    m_MapData[163 - i * m_MapWidth] = -1;
+        //}
 
-        TiledMapMgr.instance.GenerateMap(m_MapWidth, m_MapHeight, 0.62f, 0.62f, "Square");
+        TiledMapMgr.instance.GenerateMap(m_MapWidth, m_MapHeight, 0.62f, 0.62f, ShapeType.Square);
 
         for (int i = 0; i < m_MapData.Length; i++)
         {
@@ -91,7 +91,7 @@ public class Dijkstra : MonoBehaviour
         for (int i = 0; i < m_MapWidth * m_MapHeight; i++)
         {
             Tiled tiled = TiledMapMgr.instance.GetGridByIndex(i + 1);
-            int cost = 1;
+            int cost = UnityEngine.Random.Range(1, 5);
             m_Map[i] = cost;
             tiled.txtLeftTop.text = cost.ToString();
             tiled.txtLeftTop.color = Color.red;
@@ -120,13 +120,10 @@ public class Dijkstra : MonoBehaviour
             currNode = dijkstra.Dequeue();
             m_QueuePoints.Enqueue(currNode);
 
-            if(currNode == m_MapWidth * m_MapHeight)
-            {
-                visits[currNode - 1] = true;
-                break;
-            }
-
             visits[currNode - 1] = true;
+
+            Tiled tiled = TiledMapMgr.instance.GetGridByIndex(currNode);
+            tiled.txtLeftBottom.text = dis[currNode - 1].ToString();
 
             int currX = (currNode - 1) % m_MapWidth;
             int currY = (currNode - 1) / m_MapWidth;
@@ -135,6 +132,12 @@ public class Dijkstra : MonoBehaviour
             FindDestNode(currX, currY - 1, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
             FindDestNode(currX - 1, currY, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
             FindDestNode(currX + 1, currY, visits, dis[currNode - 1], dis, m_Nodes[currNode - 1]);
+
+            if (currNode == m_MapWidth * m_MapHeight)
+            {
+                visits[currNode - 1] = true;
+                break;
+            }
 
             int minDisNode = -1;
             int tempDis = int.MaxValue;
@@ -187,7 +190,6 @@ public class Dijkstra : MonoBehaviour
                 else if (dis[index - 1] > currDis + m_Map[index - 1])
                 {
                     dis[index - 1] = currDis + m_Map[index - 1];
-                    m_Nodes[index - 1].parent = currNode;
                 }
             }
         }

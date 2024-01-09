@@ -207,7 +207,7 @@ public class AStarSix : MonoBehaviour
 
             if (m_MapData[index - 1] == -1)
             {
-                mulity = 1000000;
+                mulity = 10000;
             }
 
             Node temp = openList.Find(obj => obj.index == index);
